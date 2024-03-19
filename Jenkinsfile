@@ -52,7 +52,7 @@ spec:
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 8080
+      targetPort: 5000
 """
           sh "kubectl rollout status deployments/hello-app"
         }
