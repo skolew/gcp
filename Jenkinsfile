@@ -27,32 +27,53 @@ pipeline {
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-app
+  name: python-test
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
   selector:
     matchLabels:
-      app: hello-app
+      app: python-test
   template:
     metadata:
       labels:
-        app: hello-app
+        app: python-test
     spec:
       containers:
-      - name: hello-app
+      - name: python-test
+        imagePullPolicy: Always
         image: ${params.IMAGE_URL}:${GIT_COMMIT}
+        ports:
+        - containerPort: 5000
+          protocol: TCP
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: hello-app
+  name: python-test
 spec:
   selector:
-    app: hello-app
+    app: python-test
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
+  type: NodePort
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: basic-ingress
+spec:
+  defaultBackend:
+    service:
+      name: python-test
+      port:
+        number: 80
 """
           sh "kubectl rollout status deployments/hello-app"
         }
