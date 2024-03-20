@@ -75,7 +75,7 @@ spec:
       port:
         number: 80
 """
-          sh "kubectl rollout status deployments/hello-app"
+          sh "kubectl rollout status deployments/python-test"
         }
       }
     }
